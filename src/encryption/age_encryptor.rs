@@ -6,12 +6,20 @@ use bincode;
 use crate::encryption::Encryptor;
 use crate::models::Folder;
 
-struct AgeEncryptor {}
+struct AgeEncryptor {
+    key: String,
+}
+
+impl AgeEncryptor {
+    pub fn new(key: String) -> Self {
+        Self { key }
+    }
+}
 
 impl Encryptor for AgeEncryptor {
-    fn encrypt(&self, key: String, data: Folder) -> Vec<u8> {
+    fn encrypt(&self, data: Folder) -> Vec<u8> {
         let bytes_data = bincode::serialize(&data).unwrap();
-        let encryptor = age::Encryptor::with_user_passphrase(Secret::new(key));
+        let encryptor = age::Encryptor::with_user_passphrase(Secret::new(self.key.clone()));
         let mut encrypted = vec![];
         let mut writer = encryptor.wrap_output(&mut encrypted).unwrap();
         writer.write_all(&bytes_data).unwrap();
@@ -19,13 +27,13 @@ impl Encryptor for AgeEncryptor {
         encrypted
     }
 
-    fn decrypt(&self, key: String, data: Vec<u8>) -> Folder {
+    fn decrypt(&self, data: Vec<u8>) -> Folder {
         let decryptor = match age::Decryptor::new(&data[..]).unwrap() {
             age::Decryptor::Passphrase(d) => d,
             _ => unreachable!()
         };
         let mut decrypted = Vec::new();
-        let mut reader = decryptor.decrypt(&Secret::new(key), None).unwrap();
+        let mut reader = decryptor.decrypt(&Secret::new(self.key.clone()), None).unwrap();
         reader.read_to_end(&mut decrypted).unwrap();
         let mut folder: Folder = bincode::deserialize(&decrypted).unwrap();
         folder
@@ -41,7 +49,7 @@ mod tests {
 
     #[test]
     fn test_encryptor() {
-        let encryptor = AgeEncryptor {};
+        let encryptor = AgeEncryptor::new("key".into());
         let mut record = Record::new();
         record.add_field("name".into(), "value".into()).unwrap();
         let path = Path::new("tests/testfile.test");
@@ -51,7 +59,7 @@ mod tests {
         main_folder.add_folder(subfolder);
         main_folder.add_record(record);
         let key = String::from("key");
-        let encrypted = encryptor.encrypt(key.clone(), main_folder);
-        let decrypted = encryptor.decrypt(key.clone(), encrypted);
+        let encrypted = encryptor.encrypt(main_folder);
+        let decrypted = encryptor.decrypt(encrypted);
     }
 }
