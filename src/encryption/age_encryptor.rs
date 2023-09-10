@@ -6,7 +6,7 @@ use bincode;
 use crate::encryption::Encryptor;
 use crate::models::Folder;
 
-struct AgeEncryptor {
+pub struct AgeEncryptor {
     key: String,
 }
 

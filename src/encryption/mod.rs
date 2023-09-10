@@ -2,6 +2,7 @@ mod age_encryptor;
 
 use crate::models::Folder;
 
+pub use age_encryptor::AgeEncryptor;
 
 pub trait Encryptor {
     fn encrypt(&self, data: Folder) -> Vec<u8>;

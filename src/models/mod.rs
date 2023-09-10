@@ -54,7 +54,7 @@ impl Record {
             }
         };
         let mut buf = Vec::new();
-        file.read(buf.as_mut_slice())?;
+        let _ = file.read(buf.as_mut_slice())?;
         let record_file = RecordFile {
             filename,
             extension,
