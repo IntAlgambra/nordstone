@@ -20,7 +20,7 @@ pub struct RecordFile {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Record {
     pub fields: HashMap<String, String>,
-    files: Option<Vec<RecordFile>>,
+    pub(crate) files: Option<Vec<RecordFile>>,
 }
 
 impl Record {
