@@ -1,7 +1,7 @@
 mod errors;
 
 use std::collections::HashMap;
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsString;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -10,16 +10,16 @@ use serde::{Deserialize, Serialize};
 
 use errors::ModelsError;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RecordFile {
     filename: OsString,
     extension: OsString,
     content: Vec<u8>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Record {
-    fields: HashMap<String, String>,
+    pub fields: HashMap<String, String>,
     files: Option<Vec<RecordFile>>,
 }
 
@@ -72,18 +72,24 @@ impl Record {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Folder {
-    records: Vec<Record>,
-    subfolders: Option<Vec<Box<Folder>>>,
+    pub name: String,
+    pub records: Vec<Record>,
+    pub subfolders: Option<Vec<Box<Folder>>>,
 }
 
 impl Folder {
-    pub fn new() -> Self {
+    pub fn new(name: String) -> Self {
         Self {
+            name,
             records: Vec::new(),
             subfolders: None,
         }
+    }
+
+    pub fn rename(&mut self, new_name: String) {
+        self.name = new_name;
     }
 
     pub fn add_record(&mut self, record: Record) {
@@ -125,14 +131,12 @@ mod tests {
 
     #[test]
     fn test_create_folder() {
-        let mut folder = Folder::new();
+        let mut folder = Folder::new("test".into());
         let record = create_record();
         folder.add_record(record);
-        let mut subfolder = Folder::new();
+        let mut subfolder = Folder::new("test".into());
         let record = create_record();
         subfolder.add_record(record);
         folder.add_folder(subfolder);
     }
-
-
 }

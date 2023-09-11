@@ -5,15 +5,15 @@ use crate::models::Folder;
 use crate::storage::StorageManager;
 use crate::encryption::{AgeEncryptor, Encryptor};
 
-const EXTENSION: &'static str = "nrdstn";
+const EXTENSION: &'static str = "conf";
 
-struct LocalStorageManager {
-    path: PathBuf,
-    encryptor: AgeEncryptor,
+pub struct LocalStorageManager {
+    pub(crate) path: PathBuf,
+    pub(crate) encryptor: AgeEncryptor,
 }
 
 impl LocalStorageManager {
-    fn new(path: PathBuf, encryptor: AgeEncryptor) -> Self {
+    pub fn new(path: PathBuf, encryptor: AgeEncryptor) -> Self {
         Self {
             path,
             encryptor,
@@ -22,7 +22,7 @@ impl LocalStorageManager {
 }
 
 impl StorageManager for LocalStorageManager {
-    fn save(&self, data: Folder) {
+    fn save(&self, data: &mut Folder) {
         let encrypted_data = self.encryptor.encrypt(data);
         fs::write(&self.path, encrypted_data).unwrap();
     }

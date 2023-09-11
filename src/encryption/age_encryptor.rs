@@ -17,7 +17,7 @@ impl AgeEncryptor {
 }
 
 impl Encryptor for AgeEncryptor {
-    fn encrypt(&self, data: Folder) -> Vec<u8> {
+    fn encrypt(&self, data: &mut Folder) -> Vec<u8> {
         let bytes_data = bincode::serialize(&data).unwrap();
         let encryptor = age::Encryptor::with_user_passphrase(Secret::new(self.key.clone()));
         let mut encrypted = vec![];
