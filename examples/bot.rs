@@ -16,7 +16,7 @@ async fn main() {
         types::{DiceEmoji, ParseMode},
     };
 
-    let bot = Bot::new("6669073526:AAE4IrwfiV_YolwTPalZ23TEm0u1zVfOr3k");
+    let bot = Bot::new("");
     let mut get_updates = GetUpdates::new();
     loop {
         println!("{:?}", get_updates);
