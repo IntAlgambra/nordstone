@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use std::fs;
 
-use serde::{Serialize, Deserialize},
+use serde::{Serialize, Deserialize};
 use teloxide::prelude::*;
 use teloxide::utils::command::BotCommands;
 
